@@ -17,6 +17,8 @@ import {
 import { CardWrapper } from "@/components/auth/card-wrapper"
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
+import { FormError } from "../form-error";
+import { FormSuccess } from "../form-success";
 
 export const LoginForm =()=>{
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -27,7 +29,9 @@ export const LoginForm =()=>{
     }
   })
   
-
+  const onSubmit = (values: z.Infer<typeof LoginSchema>) =>{
+    console.log(values)
+  }
   
   return (
     <CardWrapper
@@ -37,7 +41,7 @@ export const LoginForm =()=>{
       showSocial
     >
       <Form {... form}>
-      <form onSubmit={form.handleSubmit( ()=>{} )}
+      <form onSubmit={form.handleSubmit( onSubmit )}
         className="space-y-6"
       >
         <div className="space-y-4">
@@ -81,6 +85,10 @@ export const LoginForm =()=>{
           )}
           />
         </div>
+        
+        <FormError message=""/>
+        <FormSuccess message=""/>
+        
         <Button 
           type="submit"
           className="w-full"
