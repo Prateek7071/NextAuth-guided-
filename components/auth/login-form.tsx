@@ -14,13 +14,20 @@ import {
   FormMessage
 } from "@/components/ui/form"
 
+import { useState, useTransition } from "react";
 import { CardWrapper } from "@/components/auth/card-wrapper"
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
+import { login } from "@/actions/login";
+
 
 export const LoginForm =()=>{
+  const [error,setError] = useState<string | undefined>("")
+  const [success,setSuccess] = useState<string | undefined>("")
+  const [isPending, startTransition] = useTransition();
+  
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues:{ 
@@ -30,7 +37,17 @@ export const LoginForm =()=>{
   })
   
   const onSubmit = (values: z.Infer<typeof LoginSchema>) =>{
-    console.log(values)
+    setError(""); //everytime a new submit clear old data
+    setSuccess("");
+    
+    // if using api could have used : axios.post("/your/api/route", values).then and .catch...
+    startTransition(()=>{
+    login(values) //server action
+      .then((data)=> {
+        setError(data.error)
+        setSuccess(data.success)
+      })
+    })
   }
   
   return (
@@ -56,6 +73,7 @@ export const LoginForm =()=>{
               <FormControl>
                 <Input 
                   {...field}
+                  disabled = {isPending}
                   placeholder="johndoe@example.com"
                   type="email"
                 />
@@ -76,6 +94,7 @@ export const LoginForm =()=>{
               <FormControl>
                 <Input 
                   {...field}
+                  disabled = {isPending}
                   placeholder="*******"
                   type="password"
                 />
@@ -86,10 +105,11 @@ export const LoginForm =()=>{
           />
         </div>
         
-        <FormError message=""/>
-        <FormSuccess message=""/>
+          <FormError message={error} />
+          <FormSuccess message={success}/>
         
         <Button 
+          disabled= {isPending}
           type="submit"
           className="w-full"
         >
