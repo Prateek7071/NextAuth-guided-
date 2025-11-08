@@ -1,4 +1,4 @@
-import { Lock, User, Mail, Eye, EyeOff } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { Poppins } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
